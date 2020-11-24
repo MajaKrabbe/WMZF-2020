@@ -52,11 +52,11 @@ def temp_input():
         else:
             break
 
-    velocity = np.ndarray()
+    velocity = np.zeros(4)
     while true:
         velocity[0] = input('Podaj typ współrzędnych prędkości (1-kartezjańskie, 2-cylindryczne, 3-sferyczne):')
         try:
-            velocity[0] = int(velocity[0])
+            velocity[0] = float(velocity[0])
             if not (velocity[0] == 1 or velocity[0] == 2 or velocity[0] == 3):
                 raise ValueError
         except:
