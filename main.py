@@ -6,6 +6,15 @@ Ruch punktu materialnego w polu grawitacyjnym
 import matplotlib.pyplot as plot
 import numpy as np
 
+#todo: plik .dat z danymi dostępnych środowisk, wczytywanie go w temp_input().
+# format środowisk widzę tak:
+# name, gravfieldtype, surfacegrav, radius, rotation
+# name - duh
+# gravfieldtype - pole jednorodne czy centralne
+# surfacegrav - przyspieszenie graw. na powierzchni. z tego i promienia można policzyć masę ciała, kiedy jest ona potrzebna
+# radius - promień kuli, -1 dla pola jednorodnego (płaszczyzna)
+# rotation - prędkość kątowa obrotu środowiska. środowisko w wykresach chyba powinno być niezmienne, i wtedy pojawi się ten Coriolis
+
 def temp_input():
     '''tymaczasowo, zawartość funkcji pewnie się do czegoś przyda ale na nie wiem czy chcemy to w takiej postaci'''
 
