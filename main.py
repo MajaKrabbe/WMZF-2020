@@ -5,6 +5,7 @@ Ruch punktu materialnego w polu grawitacyjnym
 
 import matplotlib.pyplot as plot
 import numpy as np
+import constants as const
 
 #todo: plik .dat z danymi dostępnych środowisk, wczytywanie go w temp_input().
 # format środowisk widzę tak:
@@ -18,11 +19,22 @@ import numpy as np
 def temp_input():
     '''tymaczasowo, zawartość funkcji pewnie się do czegoś przyda ale na nie wiem czy chcemy to w takiej postaci'''
 
-    print('Wybierz środowisko ruchu. Dostępne środowiska:')
-    #todo: wyświetlanie środowisk
-
-    environment = input()
+    # wybór układu ruchu
+    file = open("environments.dat", 'r')
+    envs = np.ndarray()
+    for line in file:
+        (name, gravfieldtype, surfacegrav, radius, rotation) = line.split()
+        mass = float(surfacegrav) * float(radius)**2 / const.GRAV_CONST
+        dct = {'name':name, 'gravfieldtype':gravfieldtype, 'surfacegrav':float(surfacegrav), 'radius':float(radius), 'rotation':float(rotation), 'mass':mass}
+        envs = np.append(envs, dct)
+    file.close()
+    print('Dostępne środowiska:')
+    for element in envs:
+        print(element[name], end='\t')
+    environment = input('\nWybierz środowisko ruchu:')
     #todo: normalizacja nazwy do małych liter i bez polskich znaków. dopasowanie do jednego z istniejących środowisk
+
+    # czy uzwględniamy siłę Coriolisa
     while true:
         if environment[gravfieldtype] == 'centralne':
             flagCoriolis = input('Czy uwzględnić wpływ rotacji ciała na trajektorię? Y/N')
@@ -38,8 +50,33 @@ def temp_input():
             except:
                 continue
 
-    #todo: polożenie geograficzne dla flagCoriolis == True, dla False - ustawić opłożenie na biegun północny bo i tak to będzie bez znaczenia
+    # współrzędne geograficzne położenia początkowego
+    location = np.zeros(2)
+    if flagCoriolis == True:
+        geolength = input('Podaj długość geograficzną położenia startowego w stopniach. Wielkości dodatnie - długość geograficzna wschodnia (E), ujemna - zachodnia (W):')
+        geowidth = input('Podaj szerokość geograficzną położenia startowego w stopniach. Wielkości dodatnie - szerokość geograficzna północna (N), ujemne - południowa (S):')
+        while true:
+            try:
+                if location[0] > 180 or location[0] < -180 or location[1] > 90 or location[1] < -90:
+                    raise ValueError
+                location[0] = float(geolength) / const.DEG_PER_RAD
+                location[1] = float(geowidth) / const.DEG_PER_RAD
+            except ValueError:
+                print('Podaj poprawne współrzędne geograficzne.')
+                continue
+            except:
+                print('Podaj wartości liczbowe.')
+                continue
+            else:
+                break
+        # konwersja długości geograficznej na współrzędne sferyczne
+        if location[0] < 0:
+            location[0] += 2*const.PI
+        # konwersja szerokości geograficznej na współrzędne sferyczne
+        location[1] *= (-1)
+        location[1] += 0.5*const.PI
 
+    # położenie początkowe nad powierzchnią ziemi
     while true:
         height = input('Podaj wysokość (w metrach) nad powierzchnią ziemi w chwili początkowej:')
         try:
@@ -52,6 +89,7 @@ def temp_input():
         else:
             break
 
+    # prędkość w jednym z typów układów współrzędnych
     velocity = np.zeros(4)
     while true:
         velocity[0] = input('Podaj typ współrzędnych prędkości (1-kartezjańskie, 2-cylindryczne, 3-sferyczne):')
@@ -80,16 +118,24 @@ def temp_input():
             velocity[2] = input('Podaj nachylenie do poziomu w radianach:')
             velocity[3] = input('Podaj szybkość [m/s]:')
         try:
-            0 == 0
             #todo: konwersja na floaty, kąty znormalizować bo obsługujemy tylko wartości [0,2pi) dla azymutu i [0.5pi,-0.5pi] dla nachylenia
             #      dla radianów sprawdzić czy format jest 0.0 czy raczej 0.0pi / 0.0 pi -> wtedy trzeba konwertować na liczbę postaci 0.0*pi
             #      konwertować nachylenie od poziomu na nachylenie od osi pionowej; wtedy kąt powinien być jest [0,pi]
+            '''if velocity[0] == 1:
+                for v in velocity:
+                    v = float(v)
+            elif velocity[0] == 2:
+                velocity[1] = str(velocity[1])'''
+
+
         except:
             print('Podano niepoprawne współrzędne.')
             continue
         else:
             break
-    return (environment, flagCoriolis, height, velocity)
+
+    return (environment, flagCoriolis, location, height, velocity)
+    #todo: UPEWNIĆ SIĘ ŻE WSZYSTKIE POTRZEBNE INFORMACJE SĄ ZWRACANE PO DOKOŃCZENIU KODU FUNKCJI
 
 
 
