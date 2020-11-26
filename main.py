@@ -10,7 +10,7 @@ import constants as const
 #todo: plik .dat z danymi dostępnych środowisk, wczytywanie go w temp_input().
 # format środowisk widzę tak:
 # name, gravfieldtype, surfacegrav, radius, rotation
-# name - duh
+# name - bez polskich znaków
 # gravfieldtype - pole jednorodne czy centralne
 # surfacegrav - przyspieszenie graw. na powierzchni. z tego i promienia można policzyć masę ciała, kiedy jest ona potrzebna
 # radius - promień kuli, -1 dla pola jednorodnego (płaszczyzna)
@@ -32,13 +32,22 @@ def temp_input():
     file.close()
     print('Dostępne środowiska:')
     for element in envs:
-        print(element[name], end='\t')
+        print(element['name'], end='\t')
     environment = input('\nWybierz środowisko ruchu:')
-    #todo: normalizacja nazwy do małych liter i bez polskich znaków. dopasowanie do jednego z istniejących środowisk
+    environment = environment.lower()
+    if environment == 'księżyc' or environment == 'księzyc' or environment == 'ksieżyc':
+        environment = 'ksiezyc'
+    if environment == 'płaszczyzna':
+        environment = 'plaszczyzna'
+    #todo: inne warunki dla polskich znaków?
+    for env in envs:
+        if env['name'].lower() == environment:
+            environment = env
+            break
 
     # czy uzwględniamy siłę Coriolisa
     while true:
-        if environment[gravfieldtype] == 'centralne':
+        if environment['gravfieldtype'] == 'centralne':
             flagCoriolis = input('Czy uwzględnić wpływ rotacji ciała na trajektorię? Y/N')
             try:
                 if flagCoriolis.lower() == 'n':
@@ -120,13 +129,25 @@ def temp_input():
             temp2 = input('Podaj nachylenie do poziomu w radianach:')
             temp3 = input('Podaj szybkość [m/s]:')
         try:
-            #todo: konwersja na floaty, kąty znormalizować bo obsługujemy tylko wartości [0,2pi) dla azymutu i [0.5pi,-0.5pi] dla nachylenia
-            #      dla radianów sprawdzić czy format jest 0.0 czy raczej 0.0pi / 0.0 pi -> wtedy trzeba konwertować na liczbę postaci 0.0*pi
-            #      konwertować nachylenie od poziomu na nachylenie od osi pionowej; wtedy kąt powinien być jest [0,pi]
-
-
-
-
+            if velocity[0] == 2 or velocity[0] == 3:
+                if temp1.endswith(('pi', 'PI', 'Pi')):
+                    temp1 = float(temp1[0:len(temp1)-2]) * const.PI
+                while temp1 >= 2*const.PI:
+                    temp1 -= 2 * const.PI
+                while temp1 < 0:
+                    temp1 += 2 * const.PI
+            if velocity[0] == 3:
+                if temp2.endswith(('pi', 'PI', 'Pi')):
+                        temp2 = float(temp2[0:len(temp2) - 2]) * const.PI
+                #konwersja z nachylenia do poziomu na odchylenie od osi pionowej
+                temp2 += 0.5*const.PI
+                if temp2 < 0:
+                    temp2 *= (-1)
+                if temp2 > const.PI:
+                    temp2 = 2*const.PI - temp2
+            velocity[1] = float(temp1)
+            velocity[2] = float(temp2)
+            velocity[3] = float(temp3)
         except:
             print('Podano niepoprawne współrzędne.')
             continue
