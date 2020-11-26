@@ -21,12 +21,14 @@ def temp_input():
 
     # wybór układu ruchu
     file = open("environments.dat", 'r')
-    envs = np.ndarray()
+    # envs = np.ndarray()
+    envs = []
     for line in file:
         (name, gravfieldtype, surfacegrav, radius, rotation) = line.split()
         mass = float(surfacegrav) * float(radius)**2 / const.GRAV_CONST
         dct = {'name':name, 'gravfieldtype':gravfieldtype, 'surfacegrav':float(surfacegrav), 'radius':float(radius), 'rotation':float(rotation), 'mass':mass}
-        envs = np.append(envs, dct)
+        # envs = np.append(envs, dct)
+        envs.append(dct)
     file.close()
     print('Dostępne środowiska:')
     for element in envs:
@@ -92,9 +94,9 @@ def temp_input():
     # prędkość w jednym z typów układów współrzędnych
     velocity = np.zeros(4)
     while true:
-        velocity[0] = input('Podaj typ współrzędnych prędkości (1-kartezjańskie, 2-cylindryczne, 3-sferyczne):')
+        temp = input('Podaj typ współrzędnych prędkości (1-kartezjańskie, 2-cylindryczne, 3-sferyczne):')
         try:
-            velocity[0] = float(velocity[0])
+            velocity[0] = float(temp)
             if not (velocity[0] == 1 or velocity[0] == 2 or velocity[0] == 3):
                 raise ValueError
         except:
@@ -104,28 +106,25 @@ def temp_input():
     while true:
         if velocity[0] == 1:
             print('Układ współrzędnych kartezjańskich; x, y - współrzędne poziome, z - współrzędna pionowa. Podaj współrzędną x prędkości [m/s]:')
-            velocity[1] = input()
-            velocity[2] = input('Podaj współrzędną y prędkości [m/s]:')
-            velocity[3] = input('Podaj współrzędną z prędkości [m/s]:')
+            temp1 = input()
+            temp2 = input('Podaj współrzędną y prędkości [m/s]:')
+            temp3 = input('Podaj współrzędną z prędkości [m/s]:')
         elif velocity[0] == 2:
             print('Układ współrzędnych cylindrycznych. Podaj kierunek w radianach:')
-            velocity[1] = input()
-            velocity[2] = input('Podaj współrzędną poziomą prędkości [m/s]:')
-            velocity[3] = input('Podaj współrzędną pionową prędkości [m/s]:')
+            temp1 = input()
+            temp2 = input('Podaj współrzędną poziomą prędkości [m/s]:')
+            temp3 = input('Podaj współrzędną pionową prędkości [m/s]:')
         elif velocity[0] == 3:
             print('Układ współrzędnych sferycznych. Podaj azymut w radianach:')
-            velocity[1] = input()
-            velocity[2] = input('Podaj nachylenie do poziomu w radianach:')
-            velocity[3] = input('Podaj szybkość [m/s]:')
+            temp1 = input()
+            temp2 = input('Podaj nachylenie do poziomu w radianach:')
+            temp3 = input('Podaj szybkość [m/s]:')
         try:
             #todo: konwersja na floaty, kąty znormalizować bo obsługujemy tylko wartości [0,2pi) dla azymutu i [0.5pi,-0.5pi] dla nachylenia
             #      dla radianów sprawdzić czy format jest 0.0 czy raczej 0.0pi / 0.0 pi -> wtedy trzeba konwertować na liczbę postaci 0.0*pi
             #      konwertować nachylenie od poziomu na nachylenie od osi pionowej; wtedy kąt powinien być jest [0,pi]
-            '''if velocity[0] == 1:
-                for v in velocity:
-                    v = float(v)
-            elif velocity[0] == 2:
-                velocity[1] = str(velocity[1])'''
+
+
 
 
         except:
