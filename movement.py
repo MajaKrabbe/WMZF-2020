@@ -15,3 +15,5 @@ def gravityAcceleration(radius, x, y, z, surfaceGravAcceleration):
 
     return a
 
+#todo: tutaj będą funkcje na szybkość, położenie, siłę coriolisa
+# also trzeba wartości zapisać w wektorach chyba
