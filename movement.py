@@ -103,11 +103,11 @@ def acceleration(pos:np.ndarray, M:float, v_linear:np.ndarray = np.asarray([0,0,
     acc = np.add( grav_acc(pos, M), coriolis_acc(v_linear, v_radial) )
     return acc
 
-def distance(pos_1, pos_2 = np.array([0,0,0])):
+def distance(pos_1:np.ndarray, pos_2:np.ndarray = np.array([0,0,0])):
     '''
     Parameters
     ----------
-    pos_1 : tablica, współżędne punktu wyrażone jako (x,y,z).
+    pos_1 : tablica, współrzędne punktu wyrażone jako (x,y,z).
     pos_2 : tablica, The default is np.array([0,0,0]).
 
     Returns
@@ -121,8 +121,8 @@ def distance(pos_1, pos_2 = np.array([0,0,0])):
     dist = float(squares**(1/2))
     return dist
 
-def trajectoryPlasz(dt:float, acc:float, vel:np.array([]), 
-               pos = np.array([0, 0, 0])):
+def trajectoryPlasz(dt:float, acc:float, vel:np.ndarray,
+               pos:np.ndarray = np.array([0, 0, 0])):
     '''
     Parameters
     ----------
@@ -137,13 +137,13 @@ def trajectoryPlasz(dt:float, acc:float, vel:np.array([]),
     '''
     rx = vel[0]*dt + pos[0]
     ry = vel[1]*dt + pos[1]
-    rz = vel[2]*dt + pos[2] + 0.5*dt**2*acc
+    rz = vel[2]*dt + pos[2] + 0.5*(dt**2)*acc
    
     r = np.array([rx, ry, rz])
     return r
 
 def velocityPlasz(dt:float, acc:float, 
-                  vel = np.array([])):
+                  vel:np.ndarray = np.array([])):
     '''
     Parameters
     ----------
@@ -162,8 +162,8 @@ def velocityPlasz(dt:float, acc:float,
     v = np.array([vx, vy, vz])
     return v
 
-def timePlasz(acc:float, vel:np.array([]), 
-              pos = np.array([0, 0, 0])):
+def timePlasz(acc:float, vel:np.ndarray,
+              pos:np.ndarray = np.array([0, 0, 0])):
     '''
     Parameters
     ----------
@@ -175,13 +175,12 @@ def timePlasz(acc:float, vel:np.array([]),
     -------
     t : float, czas całkowity.
     '''
-    delta = (-vel[2])**2 - 2*(-acc)*pos[2]
+    delta = (-vel[2])**2 - 2*acc*pos[2]
     t = float((vel[2] - delta**(1/2))/-acc)
-    # t = czas całkowity ruchu
     return t
 
-def maxHeight(acc:float, vel:np.array([]), 
-              pos = np.array([0, 0, 0])):
+def maxHeight(acc:float, vel:np.ndarray,
+              pos:np.ndarray = np.array([0, 0, 0])):
     '''
     Parameters
     ----------
@@ -193,26 +192,26 @@ def maxHeight(acc:float, vel:np.array([]),
     -------
     h : float, maksymalna wysokosć.
     '''
-    h = vel[2]**2/2**acc + pos[2]
+    t = 0.5 * timePlasz(acc, vel, pos)
+    h = pos[2] + vel[2] * t + 0.5 * acc * (t**2)
     return h
 
-# Nie do końca wiem co tutaj poniżej
-
-def reach(acc:float, t:float, vel:np.array([]), 
-          pos = np.array([0, 0, 0])):
+def reach(acc:float, vel:np.ndarray,
+          pos:np.ndarray = np.array([0, 0, 0])):
     '''
     Parameters
     ----------
     acc : float, przyspieszenie grawitacyjne.
     vel : np.array([]), prędkosć początkowa.
     pos : np.array([]), pozycja początkowa. The default is np.array([0, 0, 0]).
-    t : float, czas całkowity ruchu.
 
     Returns
     -------
     z : float, zasięg.
     '''
-    v = (vel[0]**2-vel[1]**2)**(1/2)
-    z = v*t
+
+    # oblicza całkowity czas ruchu, następnie położenie po zakończeniu ruchu i odległość w której się wtedy znajduje
+    t = timePlasz(acc, vel, pos)
+    z = distance(trajectoryPlasz(t, acc, vel, pos))
     
     return z
