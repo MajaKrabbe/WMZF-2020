@@ -43,6 +43,9 @@ def data_input():
                     continue
             except:
                 continue
+        else:
+            flagCoriolis = False
+            break
 
     # współrzędne geograficzne położenia początkowego
     location = np.zeros(2)
@@ -114,14 +117,26 @@ def data_input():
         try:
             if velocity[0] == 2 or velocity[0] == 3:
                 if temp1.endswith(('pi', 'PI', 'Pi')):
+                    if temp1[0:len(temp1) - 2] == '-':
+                        temp1 = temp1.replace('-', '-1')
+                    elif temp1[0:len(temp1) - 2] == '':
+                        temp1 = '0' + temp1
                     temp1 = float(temp1[0:len(temp1)-2]) * const.PI
+                else:
+                    temp1 = float(temp1)
                 while temp1 >= 2*const.PI:
                     temp1 -= 2 * const.PI
                 while temp1 < 0:
                     temp1 += 2 * const.PI
             if velocity[0] == 3:
                 if temp2.endswith(('pi', 'PI', 'Pi')):
-                        temp2 = float(temp2[0:len(temp2) - 2]) * const.PI
+                    if temp2[0:len(temp2) - 2] == '-':
+                        temp2 = temp2.replace('-', '-1')
+                    elif temp2[0:len(temp2) - 2] == '':
+                        temp2 = '0' + temp2
+                    temp2 = float(temp2[0:len(temp2) - 2]) * const.PI
+                else:
+                    temp2 = float(temp2)
                 #konwersja z nachylenia do poziomu na odchylenie od osi pionowej
                 temp2 += 0.5*const.PI
                 if temp2 < 0:
