@@ -2,6 +2,19 @@ import numpy as np
 import constants as const
 
 def data_input():
+    '''
+    Wczytuje dane i konwertuje je na bardziej przyjazne obliczeniom.
+    Zwraca krotkę o następujących elementach:
+    [0] - environment, słownik - zawiera elementy: name, gravfieldtype, surfacegrav, radius, rotation \n
+    [1] - flagCoriolis, boolean - czy uwzględnione jest występowanie siły Coriolisa \n
+    [2] - location, ndarray - postaci [a,b], zawiera położenie początkowe w postaci współrzędnych sferycznych azymutalnej i zenitalnej \n
+    [3] - height, float - odległość od powierzchni ziemi
+    [4] - velocity, ndarray - postaci [t,x1,x2,x3], gdzie t - typ współrzędnych (1-kartezjańskie, 2-cylindryczne, 3-sferyczne),
+    x1,x2,x3 - kolejne współrzędne prędkości
+
+    :return: krotka zawierająca informacje o środowisku ruchu, występowaniu siły Coriolisa,
+             położeniu geograficznym, wysokości nad powierzchnią ziemi, prędkości początkowej
+    '''
     # wybór układu ruchu
     file = open("environments.dat", 'r')
     # envs = np.ndarray()
