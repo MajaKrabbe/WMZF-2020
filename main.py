@@ -12,7 +12,9 @@ import movement as mv
 
 def main():
     ini.dinit()
-    # din.data_input()
+    data = din.data_input()
+
+    #todo: obliczenia i wykresy
 
     return 0
 
