@@ -1,20 +1,76 @@
 import numpy as np
 import constants as const
 
+def data_conv(tup:tuple):
+    '''
+    Konwertuje dane na słownik. TYLKO DO UŻYCIA W FUNKCJI data_init()
+    '''
+
+    # konwersja położenia ze współrzędnych sferycznych na kartezjańskie
+    pos = np.zeros(3)
+    pos_r = tup[3] + tup[0]['radius']
+    pos[0] = pos_r * np.sin(tup[2][1]) * np.cos(tup[2][0])
+    pos[1] = pos_r * np.sin(tup[2][1]) * np.sin(tup[2][0])
+    pos[2] = pos_r * np.cos(tup[2][1])
+
+    # konwerssja prędkości na współrzędne kartezjańskie
+    vel = np.zeros(3)
+    if tup[4][0] == 1:      # kartezjańskie
+        vel[0] = tup[4][1]
+        vel[1] = tup[4][2]
+        vel[2] = tup[4][3]
+    elif tup[4][0] == 2:    # cylindryczne
+        vel[0] = tup[4][2] * np.cos(tup[4][1])
+        vel[1] = tup[4][2] * np.sin(tup[4][1])
+        vel[2] = tup[4][3]
+    elif tup[4][0] == 3:    # sferyczne
+        vel[0] = tup[4][3] * np.sin(tup[4][2]) * np.cos(tup[4][1])
+        vel[1] = tup[4][3] * np.sin(tup[4][2]) * np.sin(tup[4][1])
+        vel[2] = tup[4][3] * np.cos(tup[4][2])
+
+    env = {
+        'name': tup[0]['name'],
+        'grav_type': tup[0]['gravfieldtype'],
+        'surf_acc': tup[0]['surfacegrav'],
+        'radius': tup[0]['radius'],
+        'v_rot': tup[0]['rotation'],
+        'mass': tup[0]['mass'],
+        'flag_rot': tup[1],
+        'pos': pos,
+        'v_lin': vel
+    }
+
+    return env
+
 def data_input():
     '''
-    Wczytuje dane i konwertuje je na bardziej przyjazne obliczeniom.
-    Zwraca krotkę o następujących elementach:
-    [0] - environment, słownik - zawiera elementy: name, gravfieldtype, surfacegrav, radius, rotation, mass \n
-    [1] - flagCoriolis, boolean - czy uwzględnione jest występowanie siły Coriolisa \n
-    [2] - location, ndarray - postaci [a,b], zawiera położenie początkowe w postaci współrzędnych sferycznych azymutalnej i zenitalnej \n
-    [3] - height, float - odległość od powierzchni ziemi \n
-    [4] - velocity, ndarray - postaci [t,x1,x2,x3], gdzie t - typ współrzędnych (1-kartezjańskie, 2-cylindryczne, 3-sferyczne),
-    x1,x2,x3 - kolejne współrzędne prędkości
+    Przyjmuje dane od użytkownika, a następnie konwertuje je na format przyjazny obliczeniom.
 
-    :return: krotka zawierająca informacje o środowisku ruchu, występowaniu siły Coriolisa,
-             położeniu geograficznym, wysokości nad powierzchnią ziemi, prędkości początkowej
+    Zwraca słownik zawierający elementy:
+        - name
+        - grav_type
+        - surf_acc
+        - radius
+        - v_rot
+        - mass
+        - flag_rot
+        - pos
+        - v_lin
     '''
+    # '''
+    # Wczytuje dane i konwertuje je na bardziej przyjazne obliczeniom.
+    # Zwraca krotkę o następujących elementach:
+    # [0] - environment, słownik - zawiera elementy: name, gravfieldtype, surfacegrav, radius, rotation, mass \n
+    # [1] - flagCoriolis, boolean - czy uwzględnione jest występowanie siły Coriolisa \n
+    # [2] - location, ndarray - postaci [a,b], zawiera położenie początkowe w postaci współrzędnych sferycznych azymutalnej i zenitalnej \n
+    # [3] - height, float - odległość od powierzchni ziemi \n
+    # [4] - velocity, ndarray - postaci [t,x1,x2,x3], gdzie t - typ współrzędnych (1-kartezjańskie, 2-cylindryczne, 3-sferyczne),
+    # x1,x2,x3 - kolejne współrzędne prędkości
+    #
+    # :return: krotka zawierająca informacje o środowisku ruchu, występowaniu siły Coriolisa,
+    #          położeniu geograficznym, wysokości nad powierzchnią ziemi, prędkości początkowej
+    # '''
+
     # wybór układu ruchu
     file = open("environments.dat", 'r')
     # envs = np.ndarray()
@@ -165,5 +221,6 @@ def data_input():
         else:
             break
 
-    return (environment, flagCoriolis, location, height, velocity)
+    final =  (environment, flagCoriolis, location, height, velocity)
+    return data_conv(final)
 
