@@ -26,7 +26,7 @@ def main():
         vel = data['v_lin']
 
         i = 0;
-        while mv.distance(pos[len(pos)-1]) >= data['radius']:
+        while mv.distance(pos[len(pos)-1]) >= data[radius]:
             i += 1
             pos.append(mv.position(dt, pos[i-1], vel, acc))
             vel = mv.velocity(dt, vel, acc)
