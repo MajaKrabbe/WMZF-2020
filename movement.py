@@ -139,8 +139,8 @@ def trajectoryPlasz(dt:float, acc:float, vel:np.ndarray,
     ry = vel[1]*dt + pos[1]
     rz = vel[2]*dt + pos[2] + 0.5*(dt**2)*acc
    
-    r = np.array([rx, ry, rz])
-    return r
+
+    return rx, ry, rz
 
 def velocityPlasz(dt:float, acc:float, 
                   vel:np.ndarray = np.array([])):
