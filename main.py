@@ -14,12 +14,14 @@ import wykres as wyk
 def main():
     ini.dinit()
     data = din.data_input()
+    if data['name'] == 'error':
+        return 1
 
     if data['grav_type'] == 'centralne':
         if data['flag_rot'] == False:
             data['v_rot'] = 0
 
-        dt = 0.02   
+        dt = 0.2
         matrix = np.zeros((0,3), dtype = float)
         pos = []
         pos.append(data['pos'])

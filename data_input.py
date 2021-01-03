@@ -1,5 +1,6 @@
 import numpy as np
 import constants as const
+import movement as mv
 
 def data_conv(tup:tuple):
     '''
@@ -31,6 +32,14 @@ def data_conv(tup:tuple):
         vel[0] = tup[4][3] * np.sin(tup[4][2]) * np.cos(tup[4][1])
         vel[1] = tup[4][3] * np.sin(tup[4][2]) * np.sin(tup[4][1])
         vel[2] = tup[4][3] * np.cos(tup[4][2])
+
+    # czy v > I prędkość kosmiczna?
+    # w zasadzie to sprawdza czy ciało wróci kiedykolwiek na powierzchnię
+    if  tup[0]['gravfieldtype'] == 'centralne':
+        vorb = (tup[0]['mass'] * const.GRAV_CONST / (tup[0]['radius'] + tup[3])) ** 0.5
+        if mv.vector_value(vel) >= vorb:
+            print('Obiekt rzucony nie wróci nigdy na powierzchnię ciała.')
+            return {'name': 'error'}
 
     env = {
         'name': tup[0]['name'],
