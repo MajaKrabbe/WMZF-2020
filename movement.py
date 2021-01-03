@@ -176,7 +176,9 @@ def timePlasz(acc:float, vel:np.ndarray,
     t : float, czas całkowity.
     '''
     delta = (-vel[2])**2 - 2*acc*pos[2]
-    t = float((vel[2] - delta**(1/2))/-acc)
+    #t = float( (vel[2] - delta**(1/2)) / (-acc) )
+    t = 1/acc; t *= -1
+    t *= vel[2] - delta**(1/2)
     return t
 
 def maxHeight(acc:float, vel:np.ndarray,
