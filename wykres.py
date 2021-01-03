@@ -10,8 +10,6 @@ def wykresCentr(poz:float, r:int):
     argy = poz[:,1]
     argz = poz[:,2]
     
-    #TODO: dorobić zatrzymywanie na powierzchni
-    
 #    x = np.linspace(argx, r)
 #    y = np.linspace(argy, r)
 #    z = np.linspace(argz, r)
