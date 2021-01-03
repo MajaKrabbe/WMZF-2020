@@ -7,11 +7,15 @@ def data_conv(tup:tuple):
     '''
 
     # konwersja położenia ze współrzędnych sferycznych na kartezjańskie
-    pos = np.zeros(3)
-    pos_r = tup[3] + tup[0]['radius']
-    pos[0] = pos_r * np.sin(tup[2][1]) * np.cos(tup[2][0])
-    pos[1] = pos_r * np.sin(tup[2][1]) * np.sin(tup[2][0])
-    pos[2] = pos_r * np.cos(tup[2][1])
+    if tup[0]['gravfieldtype'] == 'centralne':
+        pos = np.zeros(3)
+        pos_r = tup[3] + tup[0]['radius']
+        pos[0] = pos_r * np.sin(tup[2][1]) * np.cos(tup[2][0])
+        pos[1] = pos_r * np.sin(tup[2][1]) * np.sin(tup[2][0])
+        pos[2] = pos_r * np.cos(tup[2][1])
+    else:
+        pos = np.zeros(3)
+        pos[2] = tup[3]
 
     # konwerssja prędkości na współrzędne kartezjańskie
     vel = np.zeros(3)
