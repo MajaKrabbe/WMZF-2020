@@ -21,6 +21,7 @@ def main():
         if data['flag_rot'] == False:
             data['v_rot'] = 0
 
+        # ustalenie stanu początkowego
         dt = 0.2
         matrix = np.zeros((0,3), dtype = float)
         pos = []
@@ -32,7 +33,11 @@ def main():
         acc = mv.acceleration(data['pos'], data['mass'], data['v_lin'], data['v_rot'])
         vel = data['v_lin']
 
-        i = 0              
+        maxH = mv.vector_value(pos[0]) - data['radius'] # maksymalna wysokość nad powierzchnią
+        t = 0   # czas ruchu
+
+        # obliczenia kolejnych stanów
+        i = 0
         while mv.distance(pos[len(pos)-1]) >= data['radius']:
             i += 1
             dPos = mv.position(dt, pos[i-1], vel, acc)          
@@ -40,13 +45,17 @@ def main():
             pos.append(dPos)
             vel = mv.velocity(dt, vel, acc)
             acc = mv.acceleration(pos[i], data['mass'], vel, data['v_rot'])
-          
-        
-        t = i * dt  # czas całkowity
-        R = data['radius']
-        
-        wyk.wykresCentr(matrix, R)
-        #todo: wykres, przedstawienie danych
+
+            # aktualizacja wysokości max.
+            if maxH < mv.vector_value(dPos) - data['radius']:
+                maxH = mv.vector_value(dPos) - data['radius']
+            # aktualizacja czasu ruchu
+            t += dt
+
+        dis = mv.distance(data['pos_temp'], pos[len(pos)-1])  # przemieszczenie obiektu w linii prostej
+        curve = data['radius'] * np.arccos(1-0.5*(dis**2)/(data['radius']**2))  # przemieszczenie obiektu po łuku po powierzchni
+
+        wyk.wykresCentr(matrix, data['radius'], t, maxH, curve)
 
     elif data['grav_type'] == 'jednorodne':
         tmax = mv.timePlasz(data['surf_acc'], data['v_lin'], data['pos'])
@@ -62,13 +71,12 @@ def main():
             pos[step][2] = z
 
         h_max = mv.maxHeight(data['surf_acc'], data['v_lin'], data['pos'])
-        h_max_test = pos[round(0.5*steps)]     # powinno być bliskie h_max
+        #h_max_test = pos[round(0.5*steps)]     # powinno być równe lub  b. bliskie h_max
+        #print(h_max, '\n', h_max_test)  # debug
 
         reach = mv.reach(data['surf_acc'], data['v_lin'], data['pos'])
         
-        wyk.wykresPlaszcz(pos)
-        
-        # todo: wykres, przedstawienie danych
+        wyk.wykresPlaszcz(pos, tmax, h_max, reach)
 
     return 0
 

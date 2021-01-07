@@ -24,6 +24,7 @@ def data_conv(tup:tuple):
     else:
         pos = np.zeros(3)
         pos[2] = tup[3]
+        pos_t = np.zeros(3)
 
     # konwerssja prędkości na współrzędne kartezjańskie
     vel = np.zeros(3)
