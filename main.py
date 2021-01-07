@@ -22,7 +22,7 @@ def main():
             data['v_rot'] = 0
 
         # ustalenie stanu początkowego
-        dt = 0.2
+        dt_base = 0.02
         matrix = np.zeros((0,3), dtype = float)
         pos = []
         pos.append(data['pos'])
@@ -40,6 +40,14 @@ def main():
         i = 0
         while mv.distance(pos[len(pos)-1]) >= data['radius']:
             i += 1
+            # ustalenie odpowiedniego delta t - do zoptymalizowania?
+            if mv.vector_value(pos[i-1]) - data['radius'] < 100:
+                dt = dt_base
+            elif mv.vector_value(pos[i-1]) - data['radius'] < 1000:
+                dt = 10*dt_base
+            else:
+                dt = 100*dt_base
+
             dPos = mv.position(dt, pos[i-1], vel, acc)          
             matrix = np.append(matrix,[[dPos[0],dPos[1],dPos[2]]],axis=0)      
             pos.append(dPos)
