@@ -9,11 +9,18 @@ def data_conv(tup:tuple):
 
     # konwersja położenia ze współrzędnych sferycznych na kartezjańskie
     if tup[0]['gravfieldtype'] == 'centralne':
+        # położenie
         pos = np.zeros(3)
         pos_r = tup[3] + tup[0]['radius']
         pos[0] = pos_r * np.sin(tup[2][1]) * np.cos(tup[2][0])
         pos[1] = pos_r * np.sin(tup[2][1]) * np.sin(tup[2][0])
         pos[2] = pos_r * np.cos(tup[2][1])
+        # rzut położenia na powierzchnię
+        pos_t = np.zeros(3)
+        pos_rt = tup[0]['radius']
+        pos_t[0] = pos_rt * np.sin(tup[2][1]) * np.cos(tup[2][0])
+        pos_t[1] = pos_rt * np.sin(tup[2][1]) * np.sin(tup[2][0])
+        pos_t[2] = pos_rt * np.cos(tup[2][1])
     else:
         pos = np.zeros(3)
         pos[2] = tup[3]
@@ -50,7 +57,8 @@ def data_conv(tup:tuple):
         'mass': tup[0]['mass'],
         'flag_rot': tup[1],
         'pos': pos,
-        'v_lin': vel
+        'v_lin': vel,
+        'pos_temp': pos_t
     }
 
     return env
