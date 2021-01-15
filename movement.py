@@ -194,8 +194,10 @@ def maxHeight(acc:float, vel:np.ndarray,
     -------
     h : float, maksymalna wysokosć.
     '''
-    t = 0.5 * timePlasz(acc, vel, pos)
-    h = pos[2] + vel[2] * t + 0.5 * acc * (t**2)
+    #t = 0.5 * timePlasz(acc, vel, pos)
+    #h = pos[2] + vel[2] * t + 0.5 * acc * (t**2)
+
+    h = (vel[2]**2) / (acc**2) + pos[2]
     return h
 
 def reach(acc:float, vel:np.ndarray,
